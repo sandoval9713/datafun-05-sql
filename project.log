@@ -643,3 +643,491 @@ plot.box() method for creating box plots.
 2026-10-04 11:03:01 | INFO | P05 | ===================================
 2026-10-04 11:03:01 | INFO | P05 | END main() - Executed successfully!
 2026-10-04 11:03:01 | INFO | P05 | ===================================
+2026-10-04 12:09:28 | INFO | P05 | Related tables loaded successfully.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | 02. INSPECT the grain and keys.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | States grain: one state
+2026-10-04 12:09:28 | INFO | P05 | Branches grain: one library branch
+2026-10-04 12:09:28 | INFO | P05 | Books grain: one book
+2026-10-04 12:09:28 | INFO | P05 | States columns: ['state_id', 'state_name']
+2026-10-04 12:09:28 | INFO | P05 | Branches columns: ['branch_id', 'branch_name', 'state_id', 'city']
+2026-10-04 12:09:28 | INFO | P05 | Books columns: ['book_id', 'title', 'branch_id', 'genre', 'pages']
+2026-10-04 12:09:28 | INFO | P05 | 
+The data is stored in three related tables.
+
+One state can have many library branches.
+The branch table uses state_id to identify each branch's state.
+
+One library branch can have many books.
+The book table uses branch_id to identify each book's branch.
+
+The shared keys connect information stored in different tables.
+
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | 03. CREATE a SQLite database.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | SQLite database = data/library/business.sqlite
+2026-10-04 12:09:28 | INFO | P05 | SQLite database connection created.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | 04. LOAD the tables into SQLite.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | Related tables loaded into SQLite.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | 05. QUERY across related tables with SQL.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | 
+I want to compare the number of books available at each library branch.
+The result should have one row per branch.
+
+The information I need requires the related library tables:
+- branch name is in branches,
+- book information is in books,
+- state information is in states.
+
+2026-10-04 12:09:28 | INFO | P05 | 
+SQL query:
+
+SELECT
+    b.branch_name,
+    COUNT(k.book_id) AS book_count
+FROM branches AS b
+JOIN books AS k
+    ON b.branch_id = k.branch_id
+GROUP BY
+    b.branch_name
+ORDER BY
+    book_count DESC;
+
+2026-10-04 12:09:28 | INFO | P05 | 
+Query result:
+             branch_name  book_count
+0      Kansas City Plaza          20
+1             Omaha West          19
+2       Des Moines North          18
+3          Columbia Main          17
+4          Overland Park          16
+5   Cedar Rapids Central          14
+6      Springfield South          13
+7        Lincoln Central          12
+8         Iowa City East          11
+9       Lawrence Central          10
+10           Topeka West           9
+11    St. Joseph Central           8
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | 06. VISUALIZE the query result with Python.
+2026-10-04 12:09:28 | INFO | P05 | -------------------------------
+2026-10-04 12:09:28 | INFO | P05 | 
+The query result has one numeric value
+(book count) for each branch.
+A bar chart works for comparing
+a numeric value across named categories.
+Every pandas df has a
+plot.box() method for creating box plots.
+
+2026-10-04 12:09:30 | INFO | P05 | Chart saved successfully at docs/images/first-chart.png.
+2026-10-04 12:09:30 | INFO | P05 | -------------------------------
+2026-10-04 12:09:30 | INFO | P05 | 07. SUMMARIZE what you found.
+2026-10-04 12:09:30 | INFO | P05 | -------------------------------
+2026-10-04 12:09:30 | INFO | P05 | CUSTOM OBSERVATIONS:
+The SQL query connected information from
+the states, branches, and books tables.
+
+The result has one row per library branch.
+
+I observed that some library branches have more books than others.
+
+Based on this result, I would next like to explore which book genres are most common at each branch.
+
+    
+2026-10-04 12:09:30 | INFO | P05 | -------------------------------
+2026-10-04 12:09:30 | INFO | P05 | 08. DISPLAY the visualization.
+2026-10-04 12:09:30 | INFO | P05 | -------------------------------
+2026-10-04 12:09:30 | INFO | P05 | In a script, call plt.show() at the end to display all charts.
+2026-10-04 12:09:30 | INFO | P05 | Close all chart windows (with the close button) to continue.
+2026-10-04 12:10:01 | INFO | P05 | ===================================
+2026-10-04 12:10:01 | INFO | P05 | END main() - Executed successfully!
+2026-10-04 12:10:01 | INFO | P05 | ===================================
+2026-10-04 12:10:01 | INFO | P05 | === RUN START ===
+2026-10-04 12:10:01 | INFO | P05 | project=P05 - PYTHON AND SQL
+2026-10-04 12:10:01 | INFO | P05 | repo_dir=datafun-05-sql
+2026-10-04 12:10:01 | INFO | P05 | python=3.14.7
+2026-10-04 12:10:01 | INFO | P05 | os=Darwin 21.6.0
+2026-10-04 12:10:01 | INFO | P05 | shell=zsh
+2026-10-04 12:10:01 | INFO | P05 | cwd=.
+2026-10-04 12:10:01 | INFO | P05 | github_actions=False
+2026-10-04 12:10:01 | INFO | P05 | ===================================
+2026-10-04 12:10:01 | INFO | P05 | START main()
+2026-10-04 12:10:01 | INFO | P05 | ===================================
+2026-10-04 12:10:01 | INFO | P05 | -------------------------------
+2026-10-04 12:10:01 | INFO | P05 | 01. LOAD the related tables.
+2026-10-04 12:10:01 | INFO | P05 | -------------------------------
+2026-10-04 12:10:01 | INFO | P05 | states file = data/library/state.csv
+2026-10-04 12:10:01 | INFO | P05 | branches file = data/library/branch.csv
+2026-10-04 12:10:01 | INFO | P05 | books file = data/library/book.csv
+2026-10-04 12:13:21 | INFO | P05 | Related tables loaded successfully.
+2026-10-04 12:13:21 | INFO | P05 | -------------------------------
+2026-10-04 12:13:21 | INFO | P05 | 02. INSPECT the grain and keys.
+2026-10-04 12:13:21 | INFO | P05 | -------------------------------
+2026-10-04 12:13:21 | INFO | P05 | States grain: one state
+2026-10-04 12:13:21 | INFO | P05 | Branches grain: one library branch
+2026-10-04 12:13:21 | INFO | P05 | Books grain: one book
+2026-10-04 12:13:21 | INFO | P05 | States columns: ['state_id', 'state_name']
+2026-10-04 12:13:21 | INFO | P05 | Branches columns: ['branch_id', 'branch_name', 'state_id', 'city']
+2026-10-04 12:13:21 | INFO | P05 | Books columns: ['book_id', 'title', 'branch_id', 'genre', 'pages']
+2026-10-04 12:13:21 | INFO | P05 | 
+The data is stored in three related tables.
+
+One state can have many library branches.
+The branch table uses state_id to identify each branch's state.
+
+One library branch can have many books.
+The book table uses branch_id to identify each book's branch.
+
+The shared keys connect information stored in different tables.
+
+2026-10-04 12:13:21 | INFO | P05 | -------------------------------
+2026-10-04 12:13:21 | INFO | P05 | 03. CREATE a SQLite database.
+2026-10-04 12:13:21 | INFO | P05 | -------------------------------
+2026-10-04 12:13:21 | INFO | P05 | SQLite database = data/library/business.sqlite
+2026-10-04 12:13:21 | INFO | P05 | SQLite database connection created.
+2026-10-04 12:13:21 | INFO | P05 | -------------------------------
+2026-10-04 12:13:21 | INFO | P05 | 04. LOAD the tables into SQLite.
+2026-10-04 12:13:21 | INFO | P05 | -------------------------------
+2026-10-04 12:13:22 | INFO | P05 | Related tables loaded into SQLite.
+2026-10-04 12:13:22 | INFO | P05 | -------------------------------
+2026-10-04 12:13:22 | INFO | P05 | 05. QUERY across related tables with SQL.
+2026-10-04 12:13:22 | INFO | P05 | -------------------------------
+2026-10-04 12:13:22 | INFO | P05 | 
+I want to compare the number of books available at each library branch.
+The result should have one row per branch.
+
+The information I need requires the related library tables:
+- branch name is in branches,
+- book information is in books,
+- state information is in states.
+
+2026-10-04 12:13:22 | INFO | P05 | 
+SQL query:
+
+SELECT
+    b.branch_name,
+    COUNT(k.book_id) AS book_count
+FROM branches AS b
+JOIN books AS k
+    ON b.branch_id = k.branch_id
+GROUP BY
+    b.branch_name
+ORDER BY
+    book_count DESC;
+
+2026-10-04 12:13:22 | INFO | P05 | 
+Query result:
+             branch_name  book_count
+0      Kansas City Plaza          20
+1             Omaha West          19
+2       Des Moines North          18
+3          Columbia Main          17
+4          Overland Park          16
+5   Cedar Rapids Central          14
+6      Springfield South          13
+7        Lincoln Central          12
+8         Iowa City East          11
+9       Lawrence Central          10
+10           Topeka West           9
+11    St. Joseph Central           8
+2026-10-04 12:13:22 | INFO | P05 | -------------------------------
+2026-10-04 12:13:22 | INFO | P05 | 06. VISUALIZE the query result with Python.
+2026-10-04 12:13:22 | INFO | P05 | -------------------------------
+2026-10-04 12:13:22 | INFO | P05 | 
+The query result has one numeric value
+(book count) for each branch.
+A bar chart works for comparing
+a numeric value across named categories.
+Every pandas df has a
+plot.box() method for creating box plots.
+
+2026-10-04 12:13:23 | INFO | P05 | Chart saved successfully at docs/images/first-chart.png.
+2026-10-04 12:13:23 | INFO | P05 | -------------------------------
+2026-10-04 12:13:23 | INFO | P05 | 07. SUMMARIZE what you found.
+2026-10-04 12:13:23 | INFO | P05 | -------------------------------
+2026-10-04 12:13:23 | INFO | P05 | CUSTOM OBSERVATIONS:
+The SQL query connected information from
+the states, branches, and books tables.
+
+The result has one row per library branch.
+
+I observed that some library branches have more books than others.
+
+Based on this result, I would next like to explore which book genres are most common at each branch.
+
+    
+2026-10-04 12:13:23 | INFO | P05 | -------------------------------
+2026-10-04 12:13:23 | INFO | P05 | 08. DISPLAY the visualization.
+2026-10-04 12:13:23 | INFO | P05 | -------------------------------
+2026-10-04 12:13:23 | INFO | P05 | In a script, call plt.show() at the end to display all charts.
+2026-10-04 12:13:23 | INFO | P05 | Close all chart windows (with the close button) to continue.
+2026-10-04 12:13:26 | INFO | P05 | ===================================
+2026-10-04 12:13:26 | INFO | P05 | END main() - Executed successfully!
+2026-10-04 12:13:26 | INFO | P05 | ===================================
+2026-10-04 12:13:26 | INFO | P05 | === RUN START ===
+2026-10-04 12:13:26 | INFO | P05 | project=P05 - PYTHON AND SQL
+2026-10-04 12:13:26 | INFO | P05 | repo_dir=datafun-05-sql
+2026-10-04 12:13:26 | INFO | P05 | python=3.14.7
+2026-10-04 12:13:26 | INFO | P05 | os=Darwin 21.6.0
+2026-10-04 12:13:26 | INFO | P05 | shell=zsh
+2026-10-04 12:13:26 | INFO | P05 | cwd=.
+2026-10-04 12:13:26 | INFO | P05 | github_actions=False
+2026-10-04 12:13:26 | INFO | P05 | ===================================
+2026-10-04 12:13:26 | INFO | P05 | START main()
+2026-10-04 12:13:26 | INFO | P05 | ===================================
+2026-10-04 12:13:26 | INFO | P05 | -------------------------------
+2026-10-04 12:13:26 | INFO | P05 | 01. LOAD the related tables.
+2026-10-04 12:13:26 | INFO | P05 | -------------------------------
+2026-10-04 12:13:26 | INFO | P05 | states file = data/library/state.csv
+2026-10-04 12:13:26 | INFO | P05 | branches file = data/library/branch.csv
+2026-10-04 12:13:26 | INFO | P05 | books file = data/library/book.csv
+2026-10-04 12:16:05 | INFO | P05 | Related tables loaded successfully.
+2026-10-04 12:16:05 | INFO | P05 | -------------------------------
+2026-10-04 12:16:05 | INFO | P05 | 02. INSPECT the grain and keys.
+2026-10-04 12:16:05 | INFO | P05 | -------------------------------
+2026-10-04 12:16:05 | INFO | P05 | States grain: one state
+2026-10-04 12:16:05 | INFO | P05 | Branches grain: one library branch
+2026-10-04 12:16:05 | INFO | P05 | Books grain: one book
+2026-10-04 12:16:05 | INFO | P05 | States columns: ['state_id', 'state_name']
+2026-10-04 12:16:05 | INFO | P05 | Branches columns: ['branch_id', 'branch_name', 'state_id', 'city']
+2026-10-04 12:16:05 | INFO | P05 | Books columns: ['book_id', 'title', 'branch_id', 'genre', 'pages']
+2026-10-04 12:16:05 | INFO | P05 | 
+The data is stored in three related tables.
+
+One state can have many library branches.
+The branch table uses state_id to identify each branch's state.
+
+One library branch can have many books.
+The book table uses branch_id to identify each book's branch.
+
+The shared keys connect information stored in different tables.
+
+2026-10-04 12:16:05 | INFO | P05 | -------------------------------
+2026-10-04 12:16:05 | INFO | P05 | 03. CREATE a SQLite database.
+2026-10-04 12:16:05 | INFO | P05 | -------------------------------
+2026-10-04 12:16:05 | INFO | P05 | SQLite database = data/library/business.sqlite
+2026-10-04 12:16:06 | INFO | P05 | SQLite database connection created.
+2026-10-04 12:16:06 | INFO | P05 | -------------------------------
+2026-10-04 12:16:06 | INFO | P05 | 04. LOAD the tables into SQLite.
+2026-10-04 12:16:06 | INFO | P05 | -------------------------------
+2026-10-04 12:16:06 | INFO | P05 | Related tables loaded into SQLite.
+2026-10-04 12:16:06 | INFO | P05 | -------------------------------
+2026-10-04 12:16:06 | INFO | P05 | 05. QUERY across related tables with SQL.
+2026-10-04 12:16:06 | INFO | P05 | -------------------------------
+2026-10-04 12:16:06 | INFO | P05 | 
+I want to compare the number of books available at each library branch.
+The result should have one row per branch.
+
+The information I need requires the related library tables:
+- branch name is in branches,
+- book information is in books,
+- state information is in states.
+
+2026-10-04 12:16:06 | INFO | P05 | 
+SQL query:
+
+SELECT
+    b.branch_name,
+    COUNT(k.book_id) AS book_count
+FROM branches AS b
+JOIN books AS k
+    ON b.branch_id = k.branch_id
+GROUP BY
+    b.branch_name
+ORDER BY
+    book_count DESC;
+
+2026-10-04 12:16:06 | INFO | P05 | 
+Query result:
+             branch_name  book_count
+0      Kansas City Plaza          20
+1             Omaha West          19
+2       Des Moines North          18
+3          Columbia Main          17
+4          Overland Park          16
+5   Cedar Rapids Central          14
+6      Springfield South          13
+7        Lincoln Central          12
+8         Iowa City East          11
+9       Lawrence Central          10
+10           Topeka West           9
+11    St. Joseph Central           8
+2026-10-04 12:16:06 | INFO | P05 | -------------------------------
+2026-10-04 12:16:06 | INFO | P05 | 06. VISUALIZE the query result with Python.
+2026-10-04 12:16:06 | INFO | P05 | -------------------------------
+2026-10-04 12:16:06 | INFO | P05 | 
+The query result has one numeric value
+(book count) for each branch.
+A bar chart works for comparing
+a numeric value across named categories.
+Every pandas df has a
+plot.box() method for creating box plots.
+
+2026-10-04 12:16:07 | INFO | P05 | Chart saved successfully at docs/images/first-chart.png.
+2026-10-04 12:16:07 | INFO | P05 | -------------------------------
+2026-10-04 12:16:07 | INFO | P05 | 07. SUMMARIZE what you found.
+2026-10-04 12:16:07 | INFO | P05 | -------------------------------
+2026-10-04 12:16:07 | INFO | P05 | CUSTOM OBSERVATIONS:
+The SQL query connected information from
+the states, branches, and books tables.
+
+The result has one row per library branch.
+
+I observed that some library branches have more books than others.
+
+Based on this result, I would next like to explore which book genres are most common at each branch.
+
+    
+2026-10-04 12:16:07 | INFO | P05 | -------------------------------
+2026-10-04 12:16:07 | INFO | P05 | 08. DISPLAY the visualization.
+2026-10-04 12:16:07 | INFO | P05 | -------------------------------
+2026-10-04 12:16:07 | INFO | P05 | In a script, call plt.show() at the end to display all charts.
+2026-10-04 12:16:07 | INFO | P05 | Close all chart windows (with the close button) to continue.
+2026-10-04 12:16:09 | INFO | P05 | ===================================
+2026-10-04 12:16:09 | INFO | P05 | END main() - Executed successfully!
+2026-10-04 12:16:09 | INFO | P05 | ===================================
+2026-10-04 12:16:09 | INFO | P05 | === RUN START ===
+2026-10-04 12:16:09 | INFO | P05 | project=P05 - PYTHON AND SQL
+2026-10-04 12:16:09 | INFO | P05 | repo_dir=datafun-05-sql
+2026-10-04 12:16:09 | INFO | P05 | python=3.14.7
+2026-10-04 12:16:09 | INFO | P05 | os=Darwin 21.6.0
+2026-10-04 12:16:09 | INFO | P05 | shell=zsh
+2026-10-04 12:16:09 | INFO | P05 | cwd=.
+2026-10-04 12:16:09 | INFO | P05 | github_actions=False
+2026-10-04 12:16:09 | INFO | P05 | ===================================
+2026-10-04 12:16:09 | INFO | P05 | START main()
+2026-10-04 12:16:09 | INFO | P05 | ===================================
+2026-10-04 12:16:09 | INFO | P05 | -------------------------------
+2026-10-04 12:16:09 | INFO | P05 | 01. LOAD the related tables.
+2026-10-04 12:16:09 | INFO | P05 | -------------------------------
+2026-10-04 12:16:09 | INFO | P05 | states file = data/library/state.csv
+2026-10-04 12:16:09 | INFO | P05 | branches file = data/library/branch.csv
+2026-10-04 12:16:09 | INFO | P05 | books file = data/library/book.csv
+2026-10-04 12:18:00 | INFO | P05 | Related tables loaded successfully.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | 02. INSPECT the grain and keys.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | States grain: one state
+2026-10-04 12:18:00 | INFO | P05 | Branches grain: one library branch
+2026-10-04 12:18:00 | INFO | P05 | Books grain: one book
+2026-10-04 12:18:00 | INFO | P05 | States columns: ['state_id', 'state_name']
+2026-10-04 12:18:00 | INFO | P05 | Branches columns: ['branch_id', 'branch_name', 'state_id', 'city']
+2026-10-04 12:18:00 | INFO | P05 | Books columns: ['book_id', 'title', 'branch_id', 'genre', 'pages']
+2026-10-04 12:18:00 | INFO | P05 | 
+The data is stored in three related tables.
+
+One state can have many library branches.
+The branch table uses state_id to identify each branch's state.
+
+One library branch can have many books.
+The book table uses branch_id to identify each book's branch.
+
+The shared keys connect information stored in different tables.
+
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | 03. CREATE a SQLite database.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | SQLite database = data/library/business.sqlite
+2026-10-04 12:18:00 | INFO | P05 | SQLite database connection created.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | 04. LOAD the tables into SQLite.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | Related tables loaded into SQLite.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | 05. QUERY across related tables with SQL.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | 
+I want to compare the number of books available at each library branch.
+The result should have one row per branch.
+
+The information I need requires the related library tables:
+- branch name is in branches,
+- book information is in books,
+- state information is in states.
+
+2026-10-04 12:18:00 | INFO | P05 | 
+SQL query:
+
+SELECT
+    b.branch_name,
+    COUNT(k.book_id) AS book_count
+FROM branches AS b
+JOIN books AS k
+    ON b.branch_id = k.branch_id
+GROUP BY
+    b.branch_name
+ORDER BY
+    book_count DESC;
+
+2026-10-04 12:18:00 | INFO | P05 | 
+Query result:
+             branch_name  book_count
+0      Kansas City Plaza          20
+1             Omaha West          19
+2       Des Moines North          18
+3          Columbia Main          17
+4          Overland Park          16
+5   Cedar Rapids Central          14
+6      Springfield South          13
+7        Lincoln Central          12
+8         Iowa City East          11
+9       Lawrence Central          10
+10           Topeka West           9
+11    St. Joseph Central           8
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | 06. VISUALIZE the query result with Python.
+2026-10-04 12:18:00 | INFO | P05 | -------------------------------
+2026-10-04 12:18:00 | INFO | P05 | 
+The query result has one numeric value
+(book count) for each branch.
+A bar chart works for comparing
+a numeric value across named categories.
+Every pandas df has a
+plot.box() method for creating box plots.
+
+2026-10-04 12:18:01 | INFO | P05 | Chart saved successfully at docs/images/first-chart.png.
+2026-10-04 12:18:01 | INFO | P05 | -------------------------------
+2026-10-04 12:18:01 | INFO | P05 | 07. SUMMARIZE what you found.
+2026-10-04 12:18:01 | INFO | P05 | -------------------------------
+2026-10-04 12:18:01 | INFO | P05 | CUSTOM OBSERVATIONS:
+The SQL query connected information from
+the states, branches, and books tables.
+
+The result has one row per library branch.
+
+I observed that some library branches have more books than others.
+
+Based on this result, I would next like to explore which book genres are most common at each branch.
+
+    
+2026-10-04 12:18:01 | INFO | P05 | -------------------------------
+2026-10-04 12:18:01 | INFO | P05 | 08. DISPLAY the visualization.
+2026-10-04 12:18:01 | INFO | P05 | -------------------------------
+2026-10-04 12:18:01 | INFO | P05 | In a script, call plt.show() at the end to display all charts.
+2026-10-04 12:18:01 | INFO | P05 | Close all chart windows (with the close button) to continue.
+2026-10-04 12:18:01 | INFO | P05 | ===================================
+2026-10-04 12:18:01 | INFO | P05 | END main() - Executed successfully!
+2026-10-04 12:18:01 | INFO | P05 | ===================================
+2026-10-04 12:18:01 | INFO | P05 | === RUN START ===
+2026-10-04 12:18:01 | INFO | P05 | project=P05 - PYTHON AND SQL
+2026-10-04 12:18:01 | INFO | P05 | repo_dir=datafun-05-sql
+2026-10-04 12:18:01 | INFO | P05 | python=3.14.7
+2026-10-04 12:18:01 | INFO | P05 | os=Darwin 21.6.0
+2026-10-04 12:18:01 | INFO | P05 | shell=zsh
+2026-10-04 12:18:01 | INFO | P05 | cwd=.
+2026-10-04 12:18:01 | INFO | P05 | github_actions=False
+2026-10-04 12:18:01 | INFO | P05 | ===================================
+2026-10-04 12:18:01 | INFO | P05 | START main()
+2026-10-04 12:18:01 | INFO | P05 | ===================================
+2026-10-04 12:18:01 | INFO | P05 | -------------------------------
+2026-10-04 12:18:01 | INFO | P05 | 01. LOAD the related tables.
+2026-10-04 12:18:01 | INFO | P05 | -------------------------------
+2026-10-04 12:18:01 | INFO | P05 | states file = data/library/state.csv
+2026-10-04 12:18:01 | INFO | P05 | branches file = data/library/branch.csv
+2026-10-04 12:18:01 | INFO | P05 | books file = data/library/book.csv

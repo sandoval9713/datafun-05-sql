@@ -85,13 +85,11 @@ LOG: logging.Logger = get_logger("P05", level="DEBUG")
 
 # === LOCATE THE DATA FILES ===
 
-DATA_DIR: Final[Path] = Path("data") / "retail"
+DATA_DIR: Final[Path] = Path("data") / "library"
 
-REGION_FILE: Final[Path] = DATA_DIR / "region.csv"
-STORE_FILE: Final[Path] = DATA_DIR / "store.csv"
-EMPLOYEE_FILE: Final[Path] = DATA_DIR / "employee.csv"
-
-# === LOCATE THE SQLITE DATABASE ===
+BOOK_FILE: Final[Path] = DATA_DIR / "book.csv"
+BRANCH_FILE: Final[Path] = DATA_DIR / "branch.csv"
+STATE_FILE: Final[Path] = DATA_DIR / "state.csv"
 
 DATABASE_FILE: Final[Path] = DATA_DIR / "business.sqlite"
 
@@ -102,61 +100,57 @@ CHART_PATH: Final[Path] = CHART_DIR / "first-chart.png"
 
 # === DETERMINE WHAT ONE ROW REPRESENTS ===
 
-REGION_GRAIN: Final[str] = "one business region"
-STORE_GRAIN: Final[str] = "one store"
-EMPLOYEE_GRAIN: Final[str] = "one employee"
+STATE_GRAIN: Final[str] = "one state"
+BRANCH_GRAIN: Final[str] = "one library branch"
+BOOK_GRAIN: Final[str] = "one book"
 
 # === DESCRIBE THE TABLE RELATIONSHIPS ===
 
-RELATIONSHIP_DECISION: Final[str] = r"""
+RELATIONSHIP_DECISION: Final[str] = """
 The data is stored in three related tables.
 
-One region can have many stores.
-The stores table uses region_id to identify each store's region.
+One state can have many library branches.
+The branch table uses state_id to identify each branch's state.
 
-One store can have many employees.
-The employees table uses store_id to identify each employee's store.
+One library branch can have many books.
+The book table uses branch_id to identify each book's branch.
 
 The shared keys connect information stored in different tables.
 """
 
 # === DEFINE THE ANALYTICAL QUESTION ===
 
-CUSTOM_QUERY_DECISION: Final[str] = r"""
-I want to compare the number of employees working at each store.
-The result should have one row per store.
+CUSTOM_QUERY_DECISION: Final[str] = """
+I want to compare the number of books available at each library branch.
+The result should have one row per branch.
 
-The information I need requires all three tables:
- - region name is in regions,
- - store name is in stores,
- - employee info is in employees.
+The information I need requires the related library tables:
+- branch name is in branches,
+- book information is in books,
+- state information is in states.
 """
 
 # === WRITE THE SQL QUERY ===
 
 CUSTOM_SQL_QUERY: Final[str] = """
 SELECT
-    r.region_name,
-    s.store_name,
-    COUNT(e.employee_id) AS employee_count
-FROM regions AS r
-JOIN stores AS s
-    ON r.region_id = s.region_id
-LEFT JOIN employees AS e
-    ON s.store_id = e.store_id
+    b.branch_name,
+    COUNT(k.book_id) AS book_count
+FROM branches AS b
+JOIN books AS k
+    ON b.branch_id = k.branch_id
 GROUP BY
-    r.region_name,
-    s.store_name
+    b.branch_name
 ORDER BY
-    employee_count DESC;
+    book_count DESC;
 """
+
 
 # === CHOOSE A VISUALIZATION ===
 
 CUSTOM_CHART_DECISION: Final[str] = r"""
 The query result has one numeric value
-(employee count) for each store.
-
+(book count) for each branch.
 A bar chart works for comparing
 a numeric value across named categories.
 Every pandas df has a
@@ -185,141 +179,142 @@ def main() -> None:
     LOG.info("01. LOAD the related tables.")
     LOG.info("-------------------------------")
 
-    log_path(LOG, "regions file", path=REGION_FILE)
-    log_path(LOG, "stores file", path=STORE_FILE)
-    log_path(LOG, "employees file", path=EMPLOYEE_FILE)
+    log_path(logger=LOG, label="states file", path=STATE_FILE)
+    log_path(logger=LOG, label="branches file", path=BRANCH_FILE)
+    log_path(logger=LOG, label="books file", path=BOOK_FILE)
 
-    regions_df: pd.DataFrame = pd.read_csv(REGION_FILE)
-    stores_df: pd.DataFrame = pd.read_csv(STORE_FILE)
-    employees_df: pd.DataFrame = pd.read_csv(EMPLOYEE_FILE)
 
-    LOG.info("Related tables loaded successfully.")
+states_df: pd.DataFrame = pd.read_csv(filepath_or_buffer=STATE_FILE)
+branches_df: pd.DataFrame = pd.read_csv(filepath_or_buffer=BRANCH_FILE)
+books_df: pd.DataFrame = pd.read_csv(filepath_or_buffer=BOOK_FILE)
 
-    LOG.info("-------------------------------")
-    LOG.info("02. INSPECT the grain and keys.")
-    LOG.info("-------------------------------")
+LOG.info("Related tables loaded successfully.")
 
-    LOG.info(f"Regions grain: {REGION_GRAIN}")
-    LOG.info(f"Stores grain: {STORE_GRAIN}")
-    LOG.info(f"Employees grain: {EMPLOYEE_GRAIN}")
+LOG.info("-------------------------------")
+LOG.info("02. INSPECT the grain and keys.")
+LOG.info("-------------------------------")
 
-    LOG.info(f"Regions columns: {regions_df.columns.tolist()}")
-    LOG.info(f"Stores columns: {stores_df.columns.tolist()}")
-    LOG.info(f"Employees columns: {employees_df.columns.tolist()}")
+LOG.info(msg=f"States grain: {STATE_GRAIN}")
+LOG.info(msg=f"Branches grain: {BRANCH_GRAIN}")
+LOG.info(msg=f"Books grain: {BOOK_GRAIN}")
 
-    LOG.info(RELATIONSHIP_DECISION)
+LOG.info(msg=f"States columns: {states_df.columns.tolist()}")
+LOG.info(msg=f"Branches columns: {branches_df.columns.tolist()}")
+LOG.info(msg=f"Books columns: {books_df.columns.tolist()}")
 
-    LOG.info("-------------------------------")
-    LOG.info("03. CREATE a SQLite database.")
-    LOG.info("-------------------------------")
+LOG.info(RELATIONSHIP_DECISION)
 
-    log_path(LOG, "SQLite database", path=DATABASE_FILE)
+LOG.info("-------------------------------")
+LOG.info("03. CREATE a SQLite database.")
+LOG.info("-------------------------------")
 
-    connection: sqlite3.Connection = sqlite3.connect(DATABASE_FILE)
+log_path(LOG, "SQLite database", path=DATABASE_FILE)
 
-    LOG.info("SQLite database connection created.")
+connection: sqlite3.Connection = sqlite3.connect(DATABASE_FILE)
 
-    LOG.info("-------------------------------")
-    LOG.info("04. LOAD the tables into SQLite.")
-    LOG.info("-------------------------------")
+LOG.info("SQLite database connection created.")
 
-    regions_df.to_sql(
-        "regions",
-        connection,
-        if_exists="replace",
-        index=False,
-    )
+LOG.info("-------------------------------")
+LOG.info("04. LOAD the tables into SQLite.")
+LOG.info("-------------------------------")
 
-    stores_df.to_sql(
-        "stores",
-        connection,
-        if_exists="replace",
-        index=False,
-    )
+states_df.to_sql(
+    name="states",
+    con=connection,
+    if_exists="replace",
+    index=False,
+)
 
-    employees_df.to_sql(
-        "employees",
-        connection,
-        if_exists="replace",
-        index=False,
-    )
+branches_df.to_sql(
+    name="branches",
+    con=connection,
+    if_exists="replace",
+    index=False,
+)
 
-    LOG.info("Related tables loaded into SQLite.")
+books_df.to_sql(
+    name="books",
+    con=connection,
+    if_exists="replace",
+    index=False,
+)
 
-    LOG.info("-------------------------------")
-    LOG.info("05. QUERY across related tables with SQL.")
-    LOG.info("-------------------------------")
+LOG.info("Related tables loaded into SQLite.")
 
-    LOG.info(CUSTOM_QUERY_DECISION)
-    LOG.info(f"\nSQL query:\n{CUSTOM_SQL_QUERY}")
+LOG.info("-------------------------------")
+LOG.info("05. QUERY across related tables with SQL.")
+LOG.info("-------------------------------")
 
-    result_df: pd.DataFrame = pd.read_sql_query(
-        CUSTOM_SQL_QUERY,
-        connection,
-    )
+LOG.info(CUSTOM_QUERY_DECISION)
+LOG.info(f"\nSQL query:\n{CUSTOM_SQL_QUERY}")
 
-    LOG.info(f"\nQuery result:\n{result_df}")
+result_df: pd.DataFrame = pd.read_sql_query(
+    CUSTOM_SQL_QUERY,
+    connection,
+)
 
-    LOG.info("-------------------------------")
-    LOG.info("06. VISUALIZE the query result with Python.")
-    LOG.info("-------------------------------")
+LOG.info(f"\nQuery result:\n{result_df}")
 
-    LOG.info(CUSTOM_CHART_DECISION)
+LOG.info("-------------------------------")
+LOG.info("06. VISUALIZE the query result with Python.")
+LOG.info("-------------------------------")
 
-    employee_ax = result_df.plot.bar(
-        x="store_name",
-        y="employee_count",
-        legend=False,
-    )
+LOG.info(CUSTOM_CHART_DECISION)
 
-    # CUSTOM: The analyst can customize the returned Matplotlib Axes object.
-    employee_ax.set_title("Number of Employees at Each Store")
-    employee_ax.set_xlabel("Store")
-    employee_ax.set_ylabel("Number of Employees")
+book_ax = result_df.plot.bar(
+    x="branch_name",
+    y="book_count",
+    legend=False,
+)
 
-    CHART_DIR.mkdir(parents=True, exist_ok=True)
+book_ax.set_title("Number of Books at Each Library Branch")
+book_ax.set_xlabel("Library Branch")
+book_ax.set_ylabel("Number of Books")
 
-    save_chart(
-        employee_ax,
-        CHART_PATH,
-    )
+CHART_DIR.mkdir(parents=True, exist_ok=True)
 
-    LOG.info(f"Chart saved successfully at {CHART_PATH}.")
+save_chart(
+    book_ax,
+    CHART_PATH,
+)
 
-    LOG.info("-------------------------------")
-    LOG.info("07. SUMMARIZE what you found.")
-    LOG.info("-------------------------------")
+LOG.info(f"Chart saved successfully at {CHART_PATH}.")
 
-    # Run this app first.
-    # Review the SQL result and visualization.
-    # Then record your CUSTOM observations
-    # in a simple multi-line raw string.
+LOG.info("-------------------------------")
+LOG.info("07. SUMMARIZE what you found.")
+LOG.info("-------------------------------")
 
-    LOG.info(r"""CUSTOM OBSERVATIONS:
-    The SQL query connected information from
-    the regions, stores, and employees tables.
+# Run this app first.
+# Review the SQL result and visualization.
+# Then record your CUSTOM observations
+# in a simple multi-line raw string.
 
-    The result has one row per store.
+LOG.info(r"""CUSTOM OBSERVATIONS:
+The SQL query connected information from
+the states, branches, and books tables.
 
-    I observed ...
+The result has one row per library branch.
 
-    Based on this result, I would next like to explore ...
+I observed that some library branches have more books than others.
+
+Based on this result, I would next like to explore which book genres are most common at each branch.
+
     """)
 
-    LOG.info("-------------------------------")
-    LOG.info("08. DISPLAY the visualization.")
-    LOG.info("-------------------------------")
+LOG.info("-------------------------------")
+LOG.info("08. DISPLAY the visualization.")
+LOG.info("-------------------------------")
 
-    LOG.info("In a script, call plt.show() at the end to display all charts.")
-    LOG.info("Close all chart windows (with the close button) to continue.")
+LOG.info("In a script, call plt.show() at the end to display all charts.")
+LOG.info("Close all chart windows (with the close button) to continue.")
 
-    plt.show()
+plt.show()
 
-    connection.close()
+connection.close()
 
-    LOG.info("===================================")
-    LOG.info("END main() - Executed successfully!")
-    LOG.info("===================================")
+LOG.info("===================================")
+LOG.info("END main() - Executed successfully!")
+LOG.info("===================================")
 
 
 # === CONDITIONAL EXECUTION GUARD ===
