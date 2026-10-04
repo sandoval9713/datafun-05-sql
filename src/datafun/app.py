@@ -273,7 +273,7 @@ def main() -> None:
     )
 
     # CUSTOM: The analyst can customize the returned Matplotlib Axes object.
-    employee_ax.set_title("Employees by Store")
+    employee_ax.set_title("Number of Employees at Each Store")
     employee_ax.set_xlabel("Store")
     employee_ax.set_ylabel("Number of Employees")
 

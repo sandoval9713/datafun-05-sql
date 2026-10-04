@@ -236,3 +236,11 @@ Press `Ctrl c` (both keys together) or `Ctrl+Z` then `Enter` on Windows.
 ## License
 
 This project is licensed under the [MIT License](./LICENSE).
+
+## Technical Modification
+
+I changed the bar chart title from "Employees by Store" to "Number of Employees at Each Store."
+
+I made this change to make the chart title more descriptive and easier to understand.
+
+After running the project, I observed that the chart displayed the updated title correctly.
