@@ -260,7 +260,8 @@ LOG.info("06. VISUALIZE the query result with Python.")
 LOG.info("-------------------------------")
 
 LOG.info(CUSTOM_CHART_DECISION)
-book_ax: = result_df.plot.bar(
+
+book_ax =result_df.plot.bar(
     x="branch_nabme",
     y="book_count",
     legend=False,
